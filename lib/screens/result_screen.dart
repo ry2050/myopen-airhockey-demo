@@ -59,6 +59,7 @@ class ResultScreen extends StatelessWidget {
               const SizedBox(height: 48),
               FilledButton(
                 onPressed: () {
+                  if (room.isHost) room.resetReady();
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (_) => LobbyScreen(room: room)),

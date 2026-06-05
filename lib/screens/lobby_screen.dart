@@ -13,11 +13,13 @@ class LobbyScreen extends StatefulWidget {
 
 class _LobbyScreenState extends State<LobbyScreen> {
   GameRoom get room => widget.room;
-  bool _ready = false;
+  late bool _ready;
 
   @override
   void initState() {
     super.initState();
+    // 同步 room 中已有的 ready 狀態（再來一局時 isReady 可能仍為 true）
+    _ready = room.me.isReady;
 
     room.onPlayerJoined = (_) => setState(() {});
     room.onPlayerLeft = (_) => setState(() {});
