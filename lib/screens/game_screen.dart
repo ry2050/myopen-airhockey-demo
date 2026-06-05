@@ -40,6 +40,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
 
   void _setupCallbacks() {
     room.onStateUpdate = (playerId, state) {
+      if (!_sizeKnown) return; // _state not yet initialised
       final paddleX = (state['paddleX'] as num?)?.toDouble();
       if (paddleX == null) return;
       setState(() {
@@ -104,8 +105,12 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
           ),
         ],
       );
-      if (room.isHost) room.endGame(result);
-      _goToResult(result);
+      if (room.isHost) {
+        // endGame broadcasts and triggers onGameEnd → _goToResult
+        room.endGame(result);
+      } else {
+        _goToResult(result);
+      }
     };
 
     room.onGameEnd = (result) {
@@ -114,6 +119,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   void _initGame(Size size) {
+    if (_sizeKnown) return; // guard against multiple LayoutBuilder callbacks
     _fieldSize = size;
     _state = AirHockeyState.initial(size.width, size.height);
     _ballRender = Offset(_state.ball.x, _state.ball.y);
@@ -125,7 +131,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         width: size.width,
         height: size.height,
         onScore: (scorer) {
+          // Update host's own score (client updates via onEvent)
+          if (scorer == 1) {
+            _state.p1Score++;
+          } else {
+            _state.p2Score++;
+          }
           room.sendEvent('score', {'scorer': scorer});
+          _checkWin();
         },
         onBallUpdate: (ball) {
           room.sendEvent('ball_update', {

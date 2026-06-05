@@ -42,15 +42,12 @@ class Physics {
     _checkPaddleCollision(ball, state.p2PaddleX, p2PaddleY, -1);
 
     // 得分判定（球越過上下邊界）
+    // 分數更新由 onScore callback 的呼叫方負責，physics 只負責物理和通知
     if (ball.y - AirHockeyState.ballRadius < 0) {
-      // P1 得分（球飛出 P2 那邊）
-      state.p1Score++;
       onScore(1);
       _resetBall(state, towardsPlayer: 2);
       onBallUpdate(state.ball);
     } else if (ball.y + AirHockeyState.ballRadius > height) {
-      // P2 得分
-      state.p2Score++;
       onScore(2);
       _resetBall(state, towardsPlayer: 1);
       onBallUpdate(state.ball);
