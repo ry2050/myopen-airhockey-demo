@@ -66,5 +66,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>需要區域網路存取以連接其他玩家</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_lan_play._tcp</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>需要相機以掃描 QR Code 加入遊戲房間</string>
 </dict>
 </plist>
